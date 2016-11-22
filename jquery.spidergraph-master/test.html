@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <!--<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>-->
+    <script src="https://code.jquery.com/jquery-1.12.3.js"></script>
+    <script src="assets/js/jquery.spidergraph.js"></script>
+    <script src="https://cdn.datatables.net/1.10.12/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/1.2.2/js/dataTables.buttons.min.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link href="https://netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://mottie.github.io/Keyboard/css/keyboard.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.12/css/jquery.dataTables.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/buttons/1.2.2/css/buttons.dataTables.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.42/css/bootstrap-datetimepicker.min.css" />
+    <title>Movie Radar</title>
+</head> 
+<body>
+    <style>
+        #spidergraphcontainer {
+            width: 500px;
+            height: 500px;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            margin-top: -15px;
+            margin-left: -300px;
+        }
+    </style>
+    <div class="jumbotron2">
+    	<center><h1> Movie Radar : A Movie Recommendation System </h1></center>
+    </div>
+    <div  class="container-fluid">
+    	<div class="row">
+    		<div class="col-md-12">
+    			<div class="panel panel-success">
+                    <div class="panel-heading panelHeaderText">Radar</div>
+                        <form class="form-horizontal" role="form">
+                            <div class="col-md-6">
+                               <div class="row">
+                                <div class="form-group">
+                                    <div id="spidergraphcontainer"></div>
+                                </div>
+                               </div>
+                            </div>
+                            <div class="col-sm-3">
+                                <div class="form-group">
+                                    <label class="col-lg-4 control-label">Movie Name:</label>
+                                </div>
+                            </div>
+                            <div class="col-md-1">
+                                <div class="row">
+                                    <div class="form-group">
+                                        <br />
+                                        <input type="text" id="movieNameText" placeholder="enter preferred movie">
+                                    </div>
+                                 </div>
+                                <div class="row">
+                                    <div class="form-group">
+                                        <br />
+                                        <button type="button" id="movieNameBtn" class="btn btn-primary btn-default" onclick="recommendName()">Recommend by Name</button>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <button type="button" id="movieRadarBtn" class="btn btn-primary btn-default" onclick="recommendRadar()">Recommend by Radar</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class ="col-md-6">
+
+                            </div>
+                            <div class="col-md-6">
+                                <div class="panel-body" align="right" style="margin-left: -300px;" id="loader"><img src="default.gif"></div>
+                                <div class="panel panel-success" style="visibility: hidden; margin-top:-70px"  id="movieRecommended">
+                                    <div class="panel-heading panelHeaderText">Recommendation List</div>
+                                    <div class="panel-body" align="right" id="MovieTable">
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                </div>
+            </div>
+        </div>
+    </div>
+<script>
+var final_data;
+$(document).ready( function() {
+    jQuery('#loader').hide();
+    //var field_list = ['animation','drama','sci-fi','comedy','mystery','thriller','romance','family','horror','war','biography','western','adult','history','action','crime','adventure','documentary','fantasy','music','sport'];
+    $('#spidergraphcontainer').spidergraph({
+        'fields': ['animation','drama','sci-fi','comedy','mystery','thriller','romance','family','horror','war','biography','western','adult','history','action','crime','adventure','documentary','fantasy','music','sport'],
+        'gridcolor': 'rgba(20,20,20,1)'
+    });
+    $('#spidergraphcontainer').spidergraph('addlayer', { 
+        'strokecolor': 'rgba(230,104,0,0.8)',
+        'fillcolor': 'rgba(230,104,0,0.6)',
+        'data': [0, 8, 2, 4, 9]
+    });
+    $('#spidergraphcontainer').spidergraph('addlayer', { 
+        'strokecolor': 'rgba(230,204,0,0.8)',
+        'fillcolor': 'rgba(230,204,0,0.6)',
+        'data': [5, 4, 9, 9, 4]
+    });
+
+    
+    $('#spidergraphcontainer').spidergraph('resetdata');
+    
+    $('#spidergraphcontainer').spidergraph('setactivedata', {
+        'strokecolor': 'rgba(230,104,230,0.8)',
+        'fillcolor': 'rgba(230,104,230,0.6)',
+         'data': [5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,4,4,4,3],
+
+    });
+	
+	$('#spidergraphcontainer').bind('spiderdatachange', function( ev, data ) {
+    //var perc_list = data;
+    /*var genres = field_list;
+    for(i=0;i<21;i++)
+    {
+        document.getElementById('perLis').innerHTML=genres[i]+"="+perc_list[i]+"  ";
+    }*/
+    //document.getElementById('perLis').innerHTML=perc_list[i];
+    //return data;
+        console.log("inside datachange");
+    console.log(data);
+    final_data = data;
+	});
+    /*$("#movieNameBtn").click(function(){
+        var jobValue = document.getElementById('movieNameText').value
+        stt=jobValue;
+        ab = 2;
+        var formData = new FormData();
+        formData.append('numarg', ab);
+        formData.append('stringarg', stt);
+        $.ajax({
+            type: "POST",
+            contentType: false,
+            processData: false,
+            url: "http://localhost:8010",
+            data:formData,
+            success: function(result){
+                console.log(result)
+            },
+            dataType: 'json'
+        });
+
+    });*/
+});
+function recommendName() {
+    a=jQuery.now();
+    jQuery('#MovieTable').hide();
+    jQuery('#loader').show();
+    var jobValue = document.getElementById('movieNameText').value
+    stt=jobValue;
+    ab = 2;
+    var formData = new FormData();
+    formData.append('numarg', ab);
+    formData.append('stringarg', stt);
+    $.ajax({
+        type: "POST",
+        contentType: false,
+        processData: false,
+        url: "http://localhost:8010",
+        data:formData,
+        success: function(result){
+            b=jQuery.now();
+            c=(b-a)/1000;
+            console.log(c)
+            var movieDataSet = [
+                [ "Shawshank Redemption"],
+                [ "Schindler's List"],
+                [ "Life Is Beautiful"],
+                [ "The Pursuit of Happyness"],
+                [ "My Sassy Girl"]
+            ];
+            console.log(movieDataSet);
+            $('#MovieTable').html('');
+            $('#MovieTable').html('<table id="movieList" class="display" width="100%"></table>');
+            $('#movieList').DataTable({
+                data: result["end"],
+                columns: [
+                    {title: "Movie Name"},
+                    /*{title: "Genre"},*/
+                ],
+                "order": [[0, "desc"]],
+            });
+            $('#movieList').css('visibility', 'visible');
+            jQuery('#loader').hide();
+            jQuery('#MovieTable').show();
+
+            console.log(result)
+        },
+        dataType: 'json'
+
+    });
+
+}
+
+function recommendRadar() {
+    a=jQuery.now();
+    jQuery('#MovieTable').hide();
+    jQuery('#loader').show();
+    console.log("inside recommender");
+    var stt = final_data;
+
+        ab = 1;
+        var formData = new FormData();
+        formData.append('numarg', ab);
+        formData.append('stringarg',stt);
+        $.ajax({
+            type: "POST",
+            contentType: false,
+            processData: false,
+            url: "http://localhost:8010",
+            data: formData,
+            success: function(result){
+                b=jQuery.now();
+                c=(b-a)/1000;
+                console.log(c);
+                $('#MovieTable').html('');
+                $('#MovieTable').html('<table id="movieList" class="display" width="100%"></table>');
+                $('#movieList').DataTable({
+                    data: result["end"],
+                    columns: [
+                        {title: "Movie Name"},
+                        /*{title: "Genre"},*/
+                    ],
+                    "order": [[0, "desc"]],
+                });
+                $('#movieList').css('visibility', 'visible');
+                jQuery('#MovieTable').show();
+                jQuery('#loader').hide();
+                console.log(result)
+            },
+            dataType: 'json'
+        });
+}
+</script>
+
+</body>
+</html>

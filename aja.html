@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+<script>
+$(document).ready(function(){
+	
+    $("#div1").click(function(){
+		stt=[0,0.2,0,0.6,0,0,0.2,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
+		ab = 1;
+		var formData = new FormData();
+formData.append('numarg', ab);
+formData.append('stringarg',stt);
+				$.ajax({
+			  type: "POST",
+			  contentType: false,
+        processData: false,
+			  url: "http://localhost:8010",
+			  data: formData,
+			  success: function(result){
+			  console.log(result)
+        },
+			  dataType: 'json'
+			});
+    });
+	
+	$("#div2").click(function(){
+		stt='The Dark Knight Rises';
+		ab = 2;
+		var formData = new FormData();
+formData.append('numarg', ab);
+formData.append('stringarg', stt);
+				$.ajax({
+			  type: "POST",
+			  contentType: false,
+				processData: false,
+			  url: "http://localhost:8010",
+			  data:formData,
+			  success: function(result){
+           console.log(result)
+        },
+			  dataType: 'json'
+			});
+	
+    });
+	
+});
+</script>
+</head>
+<body>
+
+<button id="div1"><h2>Multiple Strings</h2></div>
+
+
+<button id="div2"><h2>Simple String</h2></div>
+
+
+</body>
+</html>
+
